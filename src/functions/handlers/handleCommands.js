@@ -1,3 +1,5 @@
+const { REST } = require("@discordjs/rest");
+const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 
 module.exports = (client) => {
@@ -18,6 +20,18 @@ module.exports = (client) => {
 					`Command: ${command.data.name} has been passed through the handler.`
 				);
 			}
+		}
+
+		const clientId = "1012693236541829147";
+		const rest = new REST({ version: "9" }).setToken(process.env.token);
+		try {
+			console.log("Started refreshing application (/) commands.");
+
+			await rest.put(Routes.applicationCommands(clientId), {
+				body: client.commandArray,
+			});
+		} catch (error) {
+			console.error(error);
 		}
 	};
 };
