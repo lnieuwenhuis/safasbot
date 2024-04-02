@@ -36,8 +36,6 @@ module.exports = {
 
 		const numberToDelete = interaction.options.getNumber("number");
 
-		// await interaction.channel.bulkDelete(numberToDelete);
-
 		try {
 			const messages = await interaction.channel.messages.fetch({
 				limit: numberToDelete,
