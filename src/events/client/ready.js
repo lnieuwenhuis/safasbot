@@ -7,7 +7,7 @@ module.exports = {
 		client.user.setActivity({
 			type: ActivityType.Custom,
 			name: "customstatus",
-			state: "github.com/lnieuwenhuis/discordbotjs",
+			state: "github.com/lnieuwenhuis",
 		});
 
 		console.log(`Ready, ${client.user.tag} is logged in and online!`);

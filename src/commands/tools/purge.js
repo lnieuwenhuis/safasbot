@@ -4,56 +4,112 @@ const {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
+	PermissionsBitField,
+	PermissionFlagsBits,
 } = require("discord.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("purge")
-		.setDescription("Purge a number of messages, or the entire channel.")
+		.setDescription("Purge a number of messages")
+		.setDMPermission(false)
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
 		.addNumberOption((option) =>
 			option
 				.setName(`number`)
-				.setDescription(
-					`Set the Number of Messages to be Purged, or Empty for all.`
-				)
-				.setRequired(false)
+				.setDescription(`Set the Number of Messages to be Purged`)
+				.setMinValue(1)
+				.setMaxValue(100)
+				.setRequired(true)
 		),
 
 	async execute(interaction, client) {
+		if (
+			!interaction.member.permissions.has(
+				PermissionsBitField.Flags.ManageMessages
+			)
+		)
+			return interaction.reply({
+				content: "You don't have permission to do that!",
+				ephemeral: true,
+			});
+
 		const numberToDelete = interaction.options.getNumber("number");
 
-		const confirm = new ButtonBuilder()
-			.setCustomId("confirm")
-			.setLabel("Confirm Purge")
-			.setStyle(ButtonStyle.Danger);
+		// await interaction.channel.bulkDelete(numberToDelete);
 
-		const cancel = new ButtonBuilder()
-			.setCustomId("cancel")
-			.setLabel("Cancel Purge")
-			.setStyle(ButtonStyle.Secondary);
+		try {
+			const messages = await interaction.channel.messages.fetch({
+				limit: numberToDelete,
+			});
 
-		const row = new ActionRowBuilder().addComponents(confirm, cancel);
-		var embed;
+			const check14Days = (message) => {
+				const oldDate = message.createdAt;
+				const today = new Date();
 
-		if (numberToDelete) {
+				const diff = Math.abs(today - oldDate);
+				const daysBetween = Math.ceil(diff / (1000 * 3600 * 24)); //Round up
+
+				return daysBetween;
+			};
+
+			const filteredMessages = [];
+			let index = 0;
+
+			const messageFilter = (message) => {
+				if (numberToDelete > index && check14Days(message) < 14) {
+					filteredMessages.push(message);
+					index++;
+				}
+			};
+
+			messages.filter(messageFilter);
+
+			await interaction.channel.bulkDelete(filteredMessages);
+
+			let InputOrFilter = 0;
+
+			if (numberToDelete != filteredMessages.length) {
+				InputOrFilter = filteredMessages.length;
+			} else {
+				InputOrFilter = numberToDelete;
+			}
+
+			var embed;
 			embed = new EmbedBuilder()
-				.setColor("#0099ff")
-				.setTitle(
-					`Are you sure you want to Delete ${numberToDelete} Messages?`
-				)
-				.setDescription("Use the Buttons Below")
-				.addFields({ name: "title", value: "value", inline: false });
-		} else {
-			embed = new EmbedBuilder()
-				.setColor("#0099ff")
-				.setTitle(
-					"Are you sure you want to Delete the Entire Channel History?"
-				)
-				.setDescription("Use the Buttons Below");
+				.setColor("Blue")
+				.setDescription(
+					`:white_check_mark:  Deleted ${InputOrFilter} Messages newer than 14 Days.`
+				);
+		} catch (error) {
+			console.error(error);
 		}
 
-		await interaction
-			.reply({ embeds: [embed], components: [row] })
-			.catch(console.error);
+		const button = new ActionRowBuilder().addComponents(
+			new ButtonBuilder()
+				.setCustomId(`purge`)
+				.setEmoji(`🗑️`)
+				.setStyle(ButtonStyle.Primary)
+		);
+
+		const message = await interaction.reply({
+			embeds: [embed],
+			components: [button],
+		});
+
+		const collector = message.createMessageComponentCollector();
+
+		collector.on("collect", async (i) => {
+			if (i.customId === "purge") {
+				if (
+					!i.member.permissions.has(
+						PermissionsBitField.Flags.ManageMessages
+					)
+				)
+					return;
+
+				interaction.deleteReply();
+			}
+		});
 	},
 };
