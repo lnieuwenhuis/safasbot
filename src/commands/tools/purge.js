@@ -1,4 +1,10 @@
-const { SlashCommandBuilder } = require("discord.js");
+const {
+	SlashCommandBuilder,
+	EmbedBuilder,
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+} = require("discord.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -14,19 +20,26 @@ module.exports = {
 		),
 
 	async execute(interaction, client) {
-		const message = await interaction.deferReply({
-			fetchReply: true,
-		});
+		const confirm = new ButtonBuilder()
+			.setCustomId("confirm")
+			.setLabel("Confirm Ban")
+			.setStyle(ButtonStyle.Danger);
 
-		const numberToDelete = interaction.options.getNumber("number");
+		const cancel = new ButtonBuilder()
+			.setCustomId("cancel")
+			.setLabel("Cancel")
+			.setStyle(ButtonStyle.Secondary);
 
-		var newMessage = ``;
+		const row = new ActionRowBuilder().addComponents(confirm, cancel);
 
-		if (numberToDelete) {
-			newMessage = `You want to delete ${numberToDelete} messages?`;
-		} else {
-			newMessage = `You want to delete the entire channel history?`;
-		}
-		await interaction.editReply({ content: newMessage });
+		const embed = new EmbedBuilder()
+			.setColor("#0099ff")
+			.setTitle("title")
+			.setDescription("description")
+			.addFields({ name: "title", value: "value", inline: false });
+
+		await interaction
+			.reply({ embeds: [embed], components: [row] })
+			.catch(console.error);
 	},
 };
