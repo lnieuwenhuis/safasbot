@@ -19,6 +19,12 @@ module.exports = {
 				.setName(`member`)
 				.setDescription(`The member to ban from the server`)
 				.setRequired(true)
+		)
+		.addStringOption((option) =>
+			option
+				.setName(`reason`)
+				.setDescription(`The reason for the ban (can be left blank)`)
+				.setRequired(false)
 		),
 
 	async execute(interaction, client) {
@@ -32,12 +38,16 @@ module.exports = {
 				ephemeral: true,
 			});
 
+		const reason =
+			interaction.options.get(`reason`)?.value || `No reason Provided`;
 		const memberId = interaction.options.get(`member`).value;
 		const memberName =
 			interaction.guild.members.cache.get(memberId).user.globalName;
 
+		// await interaction.guild.members.cache.get(memberId).ban();
+
 		return interaction.reply({
-			content: `Member ID: ${memberId}\nMember Name: ${memberName}`,
+			content: `Member ID: ${memberId}\nMember Name: ${memberName}\nReason: ${reason}`,
 		});
 	},
 };
