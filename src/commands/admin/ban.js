@@ -8,8 +8,6 @@ const {
 	PermissionFlagsBits,
 } = require("discord.js");
 
-const delay = (ms) => Promise((res) => setTimeout(res, ms));
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("ban")
@@ -49,14 +47,12 @@ module.exports = {
 			.setTitle(
 				`Are you sure you want to ban:\n${memberName.globalName}\n\nFor the reason:\n${reason}`
 			);
-
 		const confirmButton = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId(`confirm`)
 				.setLabel(`Confirm Ban`)
 				.setStyle(ButtonStyle.Danger)
 		);
-
 		const confirmMessage = await interaction.reply({
 			embeds: [confirmEmbed],
 			components: [confirmButton],
@@ -64,7 +60,6 @@ module.exports = {
 
 		const confirmCollector =
 			confirmMessage.createMessageComponentCollector();
-
 		confirmCollector.on("collect", async (i) => {
 			if (i.customId === "confirm") {
 				if (
@@ -77,7 +72,6 @@ module.exports = {
 				const embed = new EmbedBuilder()
 					.setColor(`Blue`)
 					.setTitle(`You have banned ${memberName.globalName}`);
-
 				const button = new ActionRowBuilder().addComponents(
 					new ButtonBuilder()
 						.setCustomId(`delete`)
@@ -89,7 +83,6 @@ module.exports = {
 					embeds: [embed],
 					components: [button],
 				});
-
 				await target.ban({
 					reason: [reason],
 				});

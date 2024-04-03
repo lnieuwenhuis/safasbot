@@ -40,45 +40,43 @@ module.exports = {
 			const messages = await interaction.channel.messages.fetch({
 				limit: numberToDelete,
 			});
-
 			const check14Days = (message) => {
 				const oldDate = message.createdAt;
 				const today = new Date();
-
 				const diff = Math.abs(today - oldDate);
-				const daysBetween = Math.ceil(diff / (1000 * 3600 * 24)); //Round up
+				const daysBetween = Math.ceil(diff / (1000 * 3600 * 24));
 
 				return daysBetween;
 			};
 
 			const filteredMessages = [];
 			let index = 0;
-
 			const messageFilter = (message) => {
 				if (numberToDelete > index && check14Days(message) < 14) {
 					filteredMessages.push(message);
 					index++;
 				}
 			};
-
 			messages.filter(messageFilter);
-
 			await interaction.channel.bulkDelete(filteredMessages);
 
 			let InputOrFilter = 0;
-
 			if (numberToDelete != filteredMessages.length) {
 				InputOrFilter = filteredMessages.length;
 			} else {
 				InputOrFilter = numberToDelete;
 			}
 
+			if (InputOrFilter === 1) {
+				const descPicker = `:white_check_mark: Deleted ${InputOrFilter} message newer than 14 days.`;
+			} else {
+				const descPicker = `:white_check_mark: Deleted ${InputOrFilter} messages newer than 14 days.`;
+			}
+
 			var embed;
 			embed = new EmbedBuilder()
 				.setColor("Blue")
-				.setDescription(
-					`:white_check_mark:  Deleted ${InputOrFilter} Messages newer than 14 Days.`
-				);
+				.setDescription(descPicker);
 		} catch (error) {
 			console.error(error);
 		}
@@ -89,14 +87,12 @@ module.exports = {
 				.setEmoji(`🗑️`)
 				.setStyle(ButtonStyle.Primary)
 		);
-
 		const message = await interaction.reply({
 			embeds: [embed],
 			components: [button],
 		});
 
 		const collector = message.createMessageComponentCollector();
-
 		collector.on("collect", async (i) => {
 			if (i.customId === "purge") {
 				if (
@@ -105,7 +101,6 @@ module.exports = {
 					)
 				)
 					return;
-
 				interaction.deleteReply();
 			}
 		});
