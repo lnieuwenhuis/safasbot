@@ -19,6 +19,11 @@ module.exports = {
 				.setName(`member`)
 				.setDescription(`The member to ban from the server`)
 				.setRequired(true)
+		)
+		.addStringOption((option) =>
+			option
+				.setName(`reason`)
+				.setDescription(`Give a reason for the ban (Optional)`)
 		),
 
 	async execute(interaction, client) {
@@ -32,12 +37,44 @@ module.exports = {
 				ephemeral: true,
 			});
 
+		const reason =
+			interaction.options.get(`reason`)?.value || "No reason was given";
 		const memberId = interaction.options.get(`member`).value;
-		const memberName =
-			interaction.guild.members.cache.get(memberId).user.globalName;
+		const memberName = interaction.guild.members.cache.get(memberId).user;
 
-		return interaction.reply({
-			content: `Member ID: ${memberId}\nMember Name: ${memberName}`,
+		const confirmEmbed = new EmbedBuilder()
+			.setColor("Red")
+			.setTitle(
+				`Are you sure you want to ban:\n${memberName.globalName}\n\nFor the reason:\n${reason}`
+			);
+
+		const confirmButton = new ActionRowBuilder().addComponents(
+			new ButtonBuilder()
+				.setCustomId(`confirm`)
+				.setLabel(`Confirm Ban`)
+				.setStyle(ButtonStyle.Danger)
+		);
+
+		const message = await interaction.reply({
+			embeds: [confirmEmbed],
+			components: [confirmButton],
+			ephemeral: true,
+		});
+
+		const confirmCollector = message.createMessageComponentCollector();
+
+		confirmCollector.on("collect", async (i) => {
+			if (i.customId === "confirm") {
+				if (
+					!i.member.permissions.has(
+						PermissionsBitField.Flags.BanMembers
+					)
+				)
+					return;
+
+				interaction.guild.members.ban({ memberId, reason: reason });
+				interaction.deleteReply();
+			}
 		});
 	},
 };
