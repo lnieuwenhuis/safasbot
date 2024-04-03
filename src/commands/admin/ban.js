@@ -34,7 +34,7 @@ module.exports = {
 
 		const memberId = interaction.options.get(`member`).value;
 		const memberName =
-			interaction.guild.members.cache.get(memberIdToBan).user.globalName;
+			interaction.guild.members.cache.get(memberId).user.globalName;
 
 		return interaction.reply({
 			content: `Member ID: ${memberId}\nMember Name: ${memberName}`,
