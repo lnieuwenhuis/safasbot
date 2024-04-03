@@ -67,10 +67,12 @@ module.exports = {
 				InputOrFilter = numberToDelete;
 			}
 
+			let descPicker = "";
+
 			if (InputOrFilter === 1) {
-				const descPicker = `:white_check_mark: Deleted ${InputOrFilter} message newer than 14 days.`;
+				descPicker = `:white_check_mark: Deleted ${InputOrFilter} message newer than 14 days.`;
 			} else {
-				const descPicker = `:white_check_mark: Deleted ${InputOrFilter} messages newer than 14 days.`;
+				descPicker = `:white_check_mark: Deleted ${InputOrFilter} messages newer than 14 days.`;
 			}
 
 			var embed;
