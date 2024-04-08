@@ -1,17 +1,29 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("pause")
-		.setDescription("Return my ping"),
-	async execute(interaction, client) {
-		const message = await interaction.deferReply({
-			fetchReply: true,
-		});
+		.setDescription("Pauses the current song"),
 
-		const newMessage = `API Latency: ${client.ws.ping}\nClient Ping: ${
-			message.createdTimestamp - interaction.createdTimestamp
-		}`;
-		await interaction.editReply({ content: newMessage });
+	async execute(interaction, client) {
+		const queue = client.player.getQueue(interaction.guild);
+
+		if (!queue) {
+			await interaction.reply({
+				content: "There is no song playing!",
+				ephemeral: true,
+			});
+			return;
+		}
+
+		const currentSong = queue.current;
+
+		queue.setPaused(true);
+
+		let embed = new EmbedBuilder()
+			.setDescription(`Paused **${currentSong.title}**`)
+			.setThumbnail(currentSong.thumbnail);
+
+		await interaction.reply({ embeds: embed });
 	},
 };

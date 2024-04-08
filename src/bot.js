@@ -3,7 +3,7 @@ const { token } = process.env;
 
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-const { Player } = require("discord-player");
+const { Player, GuildQueue } = require("discord-player");
 
 const path = require("node:path");
 
@@ -37,6 +37,9 @@ client.player = new Player(client, {
 		quality: "highestAudio",
 		highWaterMark: 1 << 25,
 	},
+});
+client.musicQueue = new GuildQueue(client.player, {
+	guild: interaction.member.guild,
 });
 
 client.handleEvents();

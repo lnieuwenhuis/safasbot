@@ -1,17 +1,25 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("exit")
-		.setDescription("Return my ping"),
-	async execute(interaction, client) {
-		const message = await interaction.deferReply({
-			fetchReply: true,
-		});
+		.setDescription("Stops queue and exits voice channel"),
 
-		const newMessage = `API Latency: ${client.ws.ping}\nClient Ping: ${
-			message.createdTimestamp - interaction.createdTimestamp
-		}`;
-		await interaction.editReply({ content: newMessage });
+	async execute(interaction, client) {
+		const queue = client.player.getQueue(interaction.guild);
+
+		if (!queue) {
+			await interaction.reply({
+				content: "There is no song playing!",
+				ephemeral: true,
+			});
+			return;
+		}
+
+		const currentSong = queue.current;
+
+		queue.destroy();
+
+		await interaction.reply({ content: "See ya next time!" });
 	},
 };
