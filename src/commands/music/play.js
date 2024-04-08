@@ -12,38 +12,38 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("play")
 		.setDescription("Plays a Song")
-		.addSubcommand((subcommand) => {
+		.addSubcommand((subcommand) =>
 			subcommand
 				.setName("search")
-				.setDescription("Searches for a song")
-				.addStringOption((option) => {
+				.setDescription("Search for a song to play")
+				.addStringOption((option) =>
 					option
 						.setName("searchterms")
 						.setDescription("Search Keywords")
-						.setRequired(true);
-				});
-		})
-		.addSubcommand((subcommand) => {
+						.setRequired(true)
+				)
+		)
+		.addSubcommand((subcommand) =>
 			subcommand
 				.setName("playlist")
-				.setDescription("Plays playlist from YT")
-				.addStringOption((option) => {
+				.setDescription("Plays a Playlist from YouTube")
+				.addStringOption((option) =>
 					option
 						.setName("url")
-						.setDescription("playlist url")
-						.setRequired(true);
-				});
-		})
-		.addSubcommand((subcommand) => {
+						.setDescription("Playlist URL")
+						.setRequired(true)
+				)
+		)
+		.addSubcommand((subcommand) =>
 			subcommand
 				.setName("song")
-				.setDescription("Plays a song from YT")
-				.addStringOption((option) => {
+				.setDescription("Plays a song from YouTube")
+				.addChannelOption((option) =>
 					option
 						.setName("url")
-						.setDescription("song url")
-						.setRequired(true);
-				});
-		}),
+						.setDescription("Song URL")
+						.setRequired(true)
+				)
+		),
 	async execute(interaction, client) {},
 };
