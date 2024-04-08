@@ -1,3 +1,5 @@
+const { REST } = require("@discordjs/rest");
+const { Routes } = require("discord-api-types/v9");
 const { ActivityType } = require("discord.js");
 
 module.exports = {
