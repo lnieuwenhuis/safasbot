@@ -49,9 +49,7 @@ module.exports = {
 
 		let embed;
 
-		let queue = new GuildQueue(client.player, {
-			guild: interaction.member.guild,
-		});
+		const queue = client.queue;
 
 		if (!queue.connection)
 			await queue.connect(interaction.member.voice.channel);
@@ -73,7 +71,9 @@ module.exports = {
 			}
 
 			const song = result.tracks[0];
-			await queue.addTrack(song);
+
+			if (!queue.isPlaying()) queue.play(song);
+			else queue.addTrack(song);
 
 			embed = new EmbedBuilder()
 				.setDescription(
@@ -98,7 +98,8 @@ module.exports = {
 			}
 
 			const playlist = result.playlist;
-			await queue.addTracks(playlist);
+			if (!queue.isPlaying()) queue.play(playlist[0]);
+			else queue.addTrack(playlist);
 
 			embed = new EmbedBuilder()
 				.setDescription(
@@ -123,7 +124,8 @@ module.exports = {
 			}
 
 			const song = result.tracks[0];
-			await queue.addTracks(song);
+			if (!queue.isPlaying()) queue.play(song);
+			else queue.addTrack(song);
 
 			embed = new EmbedBuilder()
 				.setDescription(
@@ -133,8 +135,6 @@ module.exports = {
 				.setFooter({ text: `Duration: ${song.duration}` });
 		}
 
-		if (!queue.playing) await queue.play();
-
-		await interaction.reply({ embeds: [embed] });
+		return interaction.reply({ embeds: [embed] });
 	},
 };

@@ -34,13 +34,16 @@ for (const folder of functionFolders) {
 
 client.player = new Player(client, {
 	ytdlOptions: {
-		quality: "highestAudio",
+		quality: "highestaudio",
 		highWaterMark: 1 << 25,
 	},
 });
-client.musicQueue = new GuildQueue(client.player, {
-	guild: interaction.member.guild,
+
+client.queue = new GuildQueue(client.player, {
+	disableVolume: true,
 });
+
+client.player.extractors.loadDefault();
 
 client.handleEvents();
 client.handleCommands();
