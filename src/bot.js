@@ -1,16 +1,15 @@
 require("dotenv").config();
 const { token } = process.env;
 
-const {
-	Client,
-	Collection,
-	GatewayIntentBits,
-	Partials,
-} = require("discord.js");
+const { REST } = require("@discordjs/rest");
+const { Routes } = require("discord-api-types/v9");
+const { Player, GuildQueue } = require("discord-player");
 
+const path = require("node:path");
+
+const { Client, Collection, GatewayIntentBits } = require("discord.js");
 const fs = require("fs");
 const client = new Client({
-	partials: [Partials.Channel, Partials.GuildMember, Partials.User],
 	intents: [
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildVoiceStates,
@@ -32,6 +31,16 @@ for (const folder of functionFolders) {
 		require(`./functions/${folder}/${file}`)(client);
 	}
 }
+
+client.player = new Player(client, {
+	ytdlOptions: {
+		quality: "highestAudio",
+		highWaterMark: 1 << 25,
+	},
+});
+client.musicQueue = new GuildQueue(client.player, {
+	guild: interaction.member.guild,
+});
 
 client.handleEvents();
 client.handleCommands();
