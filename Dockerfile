@@ -4,7 +4,10 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm install
+RUN apk update \
+    && apk upgrade \
+    && apk add python3 make gcc g++ \
+    && npm install
 
 COPY . .
 
