@@ -6,7 +6,13 @@ module.exports = {
 		.setDescription("Skips the current song"),
 
 	async execute(interaction, client) {
-		const queue = client.queue;
+		let queue;
+
+		if (!client.queueManager.get(interaction.guild)) {
+			queue = client.queueManager.create(interaction.guild);
+		} else {
+			queue = client.queueManager.get(interaction.guild);
+		}
 
 		if (!queue) {
 			await interaction.reply({
