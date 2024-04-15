@@ -104,8 +104,11 @@ module.exports = {
 			}
 
 			const playlist = result.playlist;
-			if (!queue.isPlaying()) queue.play(playlist[0]);
-			else queue.addTrack(playlist);
+			if (!queue.isPlaying()) {
+				queue.play(playlist[0]);
+				removedItem = playlist.shift();
+				queue.addTrack(playlist);
+			} else queue.addTrack(playlist);
 
 			embed = new EmbedBuilder()
 				.setDescription(
