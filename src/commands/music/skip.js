@@ -6,7 +6,7 @@ module.exports = {
 		.setDescription("Skips the current song"),
 
 	async execute(interaction, client) {
-		const queue = client.player.getQueue(interaction.guild);
+		const queue = client.queue;
 
 		if (!queue) {
 			await interaction.reply({
