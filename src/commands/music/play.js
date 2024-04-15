@@ -64,7 +64,7 @@ module.exports = {
 			let url = interaction.options.getString("url");
 
 			const result = await client.player.search(url, {
-				requestedBy: interaction.user,
+				requestedBy: interaction.member,
 				searchEngine: QueryType.YOUTUBE_VIDEO,
 			});
 
@@ -83,7 +83,7 @@ module.exports = {
 
 			embed = new EmbedBuilder()
 				.setDescription(
-					`Added **[${song.title}](${song.url})** to the queue...`
+					`Added **[${song.title}](${song.url})** to the queue...\n\nRequested by: <@${interaction.member.id}>`
 				)
 				.setThumbnail(song.thumbnail)
 				.setFooter({ text: `Duration: ${song.duration}` });
@@ -112,7 +112,7 @@ module.exports = {
 
 			embed = new EmbedBuilder()
 				.setDescription(
-					`Added **[${playlist.title}](${playlist.url})** to the queue...`
+					`Added **[${playlist.title}](${playlist.url})** to the queue...\n\nRequested by: <@${interaction.member.id}>`
 				)
 				.setThumbnail(playlist.thumbnail)
 				.setFooter({ text: `Duration: ${playlist.duration}` });
@@ -138,7 +138,7 @@ module.exports = {
 
 			embed = new EmbedBuilder()
 				.setDescription(
-					`Added **[${song.title}](${song.url})** to the queue...`
+					`Added **[${song.title}](${song.url})** to the queue...\n\nRequested by: <@${interaction.member.id}>`
 				)
 				.setThumbnail(song.thumbnail)
 				.setFooter({ text: `Duration: ${song.duration}` });

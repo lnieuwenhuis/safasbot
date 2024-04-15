@@ -6,20 +6,17 @@ module.exports = {
 		.setDescription("Shows the first 10 songs in the queue"),
 
 	async execute(interaction, client) {
-		let queue;
+		let queue = client.queueManager.get(interaction.guild);
 
-		if (!client.queueManager.get(interaction.guild)) {
-			queue = client.queueManager.create(interaction.guild);
-		} else {
-			queue = client.queueManager.get(interaction.guild);
-		}
+		if (!queue) return interaction.reply({ content: `There is no queue` });
 
-		if (!queue || !queue.isPlaying()) {
+		if (!queue.isPlaying()) {
 			await interaction.reply("There is no song playing.");
 			return;
 		}
 
 		const queueString = queue.tracks
+			.toArray()
 			.slice(0, 10)
 			.map((song, i) => {
 				return `${i + 1}) [${song.duration}]\` ${song.title} - <@${
@@ -28,12 +25,18 @@ module.exports = {
 			})
 			.join("\n");
 
-		const currentSong = queue.current;
+		const currentSong = queue.currentTrack;
 
 		let embed = new EmbedBuilder()
 			.setDescription(
-				`**Currently Playing:**\n\` ${currentSong.title} - <@${currentSong.requestedBy.id}>`
+				`**Currently Playing**\n` +
+					(currentSong
+						? `\`[${currentSong.duration}]\` ${currentSong.title} - <@${currentSong.requestedBy.id}>`
+						: "None") +
+					`\n\n**Queue**\n${queueString}`
 			)
 			.setThumbnail(currentSong.thumbnail);
+
+		await interaction.reply({ embeds: [embed] });
 	},
 };
