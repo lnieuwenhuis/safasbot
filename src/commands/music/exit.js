@@ -18,8 +18,8 @@ module.exports = {
 
 		const currentSong = queue.current;
 
-		queue.destroy();
+		queue.delete();
 
-		await interaction.reply({ content: "See ya next time!" });
+		await interaction.reply({ content: "**Roblox death noise**" });
 	},
 };
