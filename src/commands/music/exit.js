@@ -18,7 +18,7 @@ module.exports = {
 
 		const currentSong = queue.current;
 
-		queue.delete();
+		queue.delete(interaction.guild.id);
 
 		await interaction.reply({ content: "**Roblox death noise**" });
 	},
