@@ -3,7 +3,7 @@ const { token } = process.env;
 
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-const { Player, GuildQueue } = require("discord-player");
+const { Player, GuildQueue, GuildNodeManager } = require("discord-player");
 
 const path = require("node:path");
 
@@ -39,9 +39,7 @@ client.player = new Player(client, {
 	},
 });
 
-client.queue = new GuildQueue(client.player, {
-	disableVolume: true,
-});
+client.queueManager = new GuildNodeManager(client.player);
 
 client.player.extractors.loadDefault();
 

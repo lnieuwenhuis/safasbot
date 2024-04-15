@@ -1,4 +1,4 @@
-const { QueryType, GuildQueue } = require("discord-player");
+const { QueryType, GuildQueue, GuildNodeManager } = require("discord-player");
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
@@ -49,7 +49,13 @@ module.exports = {
 
 		let embed;
 
-		const queue = client.queue;
+		let queue;
+
+		if (!client.queueManager.get(interaction.guild)) {
+			queue = client.queueManager.create(interaction.guild);
+		} else {
+			queue = client.queueManager.get(interaction.guild);
+		}
 
 		if (!queue.connection)
 			await queue.connect(interaction.member.voice.channel);
