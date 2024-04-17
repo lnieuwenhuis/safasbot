@@ -1,10 +1,4 @@
-const {
-	SlashCommandBuilder,
-	EmbedBuilder,
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -49,8 +43,8 @@ module.exports = {
 	async execute(interaction, client) {
 		// if (
 		// 	interaction.channel.id != 1219367197470756905
-		// 	// &&
-		// 	// interaction.channel.id !=  && interaction.channel.id !=
+		// &&
+		// interaction.channel.id != 1219375992339173496
 		// ) {
 		// 	return interaction.reply({
 		// 		contents: `Je zit in het verkeerde kanaal!`,
@@ -64,6 +58,9 @@ module.exports = {
 		const reason = interaction.options.getString(`reason`);
 		const clip = interaction.options.getString("clipurl");
 
+		const fiaRole = "775805566224039957";
+		const raceDirector = "919694933261185045";
+
 		if (!driver || !reason || !clip || !session)
 			return interaction.reply({
 				contents: `Vul alsjeblieft alle opties in!`,
@@ -71,18 +68,62 @@ module.exports = {
 			});
 
 		let driverString = "";
+		let threadTitle = "";
 
 		if (!secondDriver) {
-			driverString = `${driver}`;
+			driverString = `${driver.user.globalName}`;
+			threadTitle = `${interaction.member.user.globalName} vs. ${driver.user.globalName}`;
 		} else {
-			driverString = `${driver} en ${secondDriver}`;
+			driverString = `${driver.user.globalName} en ${secondDriver.user.globalName}`;
+			threadTitle = `${interaction.member.user.globalName} vs. ${driver.user.globalName} en ${secondDriver.user.globalName}`;
 		}
 
-		let embed = new EmbedBuilder()
-			.setColor("Blue")
-			.setDescription(
-				`**Report van: ${interaction.member}\nTegen: ${driverString}**\n\nSessie: ${session}\nUitleg: ${reason}\nClip: ${clip}`
-			);
-		interaction.reply({ embeds: [embed] });
+		if (!secondDriver) {
+			await interaction.reply({
+				content: `Thread aangemaakt voor het incident van ${interaction.member} tegen ${driver}`,
+			});
+
+			const threadChannel = await interaction.channel.threads.create({
+				name: `${threadTitle}`,
+				reason: `A separate thread for this incident.`,
+				rateLimitPerUser: 21600,
+			});
+			threadEmbed = new EmbedBuilder()
+				.setColor("Blue")
+				.setDescription(
+					`**Report van: ${interaction.member}\nTegen: ${driver}**\n\nSessie: ${session}\nUitleg: ${reason}\nClip: ${clip}`
+				)
+				.setFooter({
+					text: `Gebruik '/protest' om in bezwaar te gaan`,
+				});
+
+			const reportMessage = await threadChannel.send({
+				embeds: [threadEmbed],
+				content: `${interaction.member}${driver} -- <@&${fiaRole}><@&${raceDirector}>`,
+			});
+		} else {
+			await interaction.reply({
+				content: `Thread aangemaakt voor het incident van ${interaction.member} tegen ${driver} en ${secondDriver}`,
+			});
+
+			const threadChannel = await interaction.channel.threads.create({
+				name: `${threadTitle}`,
+				reason: `A separate thread for this incident.`,
+			});
+			threadChannel.permissionsFor();
+			threadEmbed = new EmbedBuilder()
+				.setColor("Blue")
+				.setDescription(
+					`**Report van: ${interaction.member}\nTegen: ${driver} en ${secondDriver}**\n\nSessie: ${session}\nUitleg: ${reason}\nClip: ${clip}\n`
+				)
+				.setFooter({
+					text: `Gebruik '/protest' om in bezwaar te gaan`,
+				});
+
+			const reportMessage = await threadChannel.send({
+				embeds: [threadEmbed],
+				content: `${interaction.member}${driver}${secondDriver} -- <@&${fiaRole}><@&${raceDirector}>`,
+			});
+		}
 	},
 };
