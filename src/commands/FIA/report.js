@@ -41,16 +41,15 @@ module.exports = {
 		),
 
 	async execute(interaction, client) {
-		// if (
-		// 	interaction.channel.id != 1219367197470756905
-		// &&
-		// interaction.channel.id != 1219375992339173496
-		// ) {
-		// 	return interaction.reply({
-		// 		contents: `Je zit in het verkeerde kanaal!`,
-		// 		ephemeral: true,
-		// 	});
-		// }
+		if (
+			interaction.channel.id != "1219367197470756905" &&
+			interaction.channel.id != "1219375992339173496"
+		) {
+			return interaction.reply({
+				content: `Je zit in het verkeerde kanaal!`,
+				ephemeral: true,
+			});
+		}
 
 		const driver = interaction.options.getMentionable(`driver`);
 		const secondDriver = interaction.options.getMentionable(`seconddriver`);

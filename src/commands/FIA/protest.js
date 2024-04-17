@@ -31,6 +31,9 @@ module.exports = {
 		),
 
 	async execute(interaction, client) {
+		await interaction.deferReply({
+			ephemeral: true,
+		});
 		const reporter = interaction.options.getMentionable(`reporter`);
 		const bezwaar = interaction.options.getString(`bezwaar`);
 		const clipurl = interaction.options.getString(`clipurl`);
@@ -43,9 +46,28 @@ module.exports = {
 			cache: false,
 		});
 
-		return console.log(
-			reportMessage.toJSON()[0].mentions.users.toJSON()[0]
-		);
+		let reportMentioned = reportMessage.toJSON()[0].mentions.users.toJSON();
+
+		let continueVar = true;
+
+		reportMentioned.forEach((user) => {
+			if (
+				interaction.member.id != user.id ||
+				reporter.user.id != user.id
+			) {
+				continueVar = false;
+				return interaction.editReply({
+					content: `Jij bent niet betrokken bij dit incident!`,
+					ephemeral: true,
+				});
+			} else {
+				continueVar = true;
+			}
+		});
+
+		if (continueVar == false) {
+			return;
+		}
 
 		let embed = new EmbedBuilder()
 			.setDescription(
@@ -53,9 +75,10 @@ module.exports = {
 			)
 			.setColor("Red");
 
-		await interaction.reply({
+		await interaction.editReply({
 			embeds: [embed],
 			content: `<@&${fiaRole}> <@&${raceDirector}>`,
+			ephemeral: false,
 		});
 	},
 };
