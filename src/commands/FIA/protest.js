@@ -48,7 +48,7 @@ module.exports = {
 
 		let reportMentioned = reportMessage.toJSON()[0].mentions.users.toJSON();
 
-		let continueVar = true;
+		let continueVar;
 
 		reportMentioned.forEach((user) => {
 			if (

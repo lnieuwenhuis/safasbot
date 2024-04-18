@@ -85,7 +85,7 @@ module.exports = {
 			const threadChannel = await interaction.channel.threads.create({
 				name: `${threadTitle}`,
 				reason: `A separate thread for this incident.`,
-				rateLimitPerUser: 21600,
+				rateLimitPerUser: 30,
 			});
 			threadEmbed = new EmbedBuilder()
 				.setColor("Blue")
