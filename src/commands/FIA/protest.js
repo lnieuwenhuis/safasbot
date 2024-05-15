@@ -11,12 +11,6 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName(`protest`)
 		.setDescription(`Maak bezwaar tegen een report`)
-		.addMentionableOption((option) =>
-			option
-				.setName("reporter")
-				.setDescription(`De persoon die het report heeft ingedient`)
-				.setRequired(true)
-		)
 		.addStringOption((option) =>
 			option
 				.setName(`bezwaar`)
@@ -34,7 +28,6 @@ module.exports = {
 		await interaction.deferReply({
 			ephemeral: true,
 		});
-		const reporter = interaction.options.getMentionable(`reporter`);
 		const bezwaar = interaction.options.getString(`bezwaar`);
 		const clipurl = interaction.options.getString(`clipurl`);
 
@@ -46,11 +39,21 @@ module.exports = {
 			cache: false,
 		});
 
+		let reportEmbed = reportMessage.toJSON()[0].embeds[0].data.description;
+
+		let reportData = reportEmbed.split("*");
+		let reportingUser = reportData[1];
 		let reportMentioned = reportMessage.toJSON()[0].mentions.users.toJSON();
 
+		let placeholder = reportingUser.split("@");
+		let reportingUserSnowFlake = placeholder[1].split(">")[0];
+
+		let reporter = await interaction.guild.members.fetch(
+			reportingUserSnowFlake
+		);
 		let continueVar;
 
-		reportMentioned.forEach((user) => {
+		await reportMentioned.forEach((user) => {
 			if (
 				interaction.member.id != user.id ||
 				reporter.user.id != user.id
@@ -71,7 +74,7 @@ module.exports = {
 
 		let embed = new EmbedBuilder()
 			.setDescription(
-				`**Bezwaar van: ${interaction.member}**\n**Op report van: ${reporter}**\n\nBezwaar: ${bezwaar}\nClip: ${clipurl}`
+				`**Bezwaar van: ${interaction.member}**\n**Op report van: ${reportingUser}**\n\nBezwaar: ${bezwaar}\nClip: ${clipurl}`
 			)
 			.setColor("Red");
 

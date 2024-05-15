@@ -31,15 +31,7 @@ module.exports = {
 				.setName(`clipurl`)
 				.setDescription(`Geef de URL naar de clip van het incident`)
 				.setRequired(true)
-		)
-		.addMentionableOption((option) =>
-			option
-				.setName(`seconddriver`)
-				.setDescription(
-					`Tweede coureur die je wilt rapporteren (optioneel)`
-				)
 		),
-
 	async execute(interaction, client) {
 		if (
 			interaction.channel.id != "1219367197470756905" &&
@@ -52,7 +44,6 @@ module.exports = {
 		}
 
 		const driver = interaction.options.getMentionable(`driver`);
-		const secondDriver = interaction.options.getMentionable(`seconddriver`);
 		const session = interaction.options.getString(`session`);
 		const reason = interaction.options.getString(`reason`);
 		const clip = interaction.options.getString("clipurl");
@@ -66,63 +57,30 @@ module.exports = {
 				ephemeral: true,
 			});
 
-		let driverString = "";
-		let threadTitle = "";
+		let driverString = `${driver.user.globalName}`;
+		let threadTitle = `${interaction.member.user.globalName} vs. ${driver.user.globalName}`;
 
-		if (!secondDriver) {
-			driverString = `${driver.user.globalName}`;
-			threadTitle = `${interaction.member.user.globalName} vs. ${driver.user.globalName}`;
-		} else {
-			driverString = `${driver.user.globalName} en ${secondDriver.user.globalName}`;
-			threadTitle = `${interaction.member.user.globalName} vs. ${driver.user.globalName} en ${secondDriver.user.globalName}`;
-		}
+		await interaction.reply({
+			content: `Thread aangemaakt voor het incident van ${interaction.member} tegen ${driver}`,
+		});
 
-		if (!secondDriver) {
-			await interaction.reply({
-				content: `Thread aangemaakt voor het incident van ${interaction.member} tegen ${driver}`,
+		const threadChannel = await interaction.channel.threads.create({
+			name: `${threadTitle}`,
+			reason: `A separate thread for this incident.`,
+			rateLimitPerUser: 30,
+		});
+		threadEmbed = new EmbedBuilder()
+			.setColor("Blue")
+			.setDescription(
+				`Report van: *${interaction.member}*\nTegen: *${driver}*\n\nSessie: *${session}*\nUitleg: ${reason}\nClip: ${clip}`
+			)
+			.setFooter({
+				text: `Gebruik '/protest' om in bezwaar te gaan`,
 			});
 
-			const threadChannel = await interaction.channel.threads.create({
-				name: `${threadTitle}`,
-				reason: `A separate thread for this incident.`,
-				rateLimitPerUser: 30,
-			});
-			threadEmbed = new EmbedBuilder()
-				.setColor("Blue")
-				.setDescription(
-					`**Report van: ${interaction.member}\nTegen: ${driver}**\n\nSessie: ${session}\nUitleg: ${reason}\nClip: ${clip}`
-				)
-				.setFooter({
-					text: `Gebruik '/protest' om in bezwaar te gaan`,
-				});
-
-			const reportMessage = await threadChannel.send({
-				embeds: [threadEmbed],
-				content: `${interaction.member}${driver} -- <@&${fiaRole}><@&${raceDirector}>`,
-			});
-		} else {
-			await interaction.reply({
-				content: `Thread aangemaakt voor het incident van ${interaction.member} tegen ${driver} en ${secondDriver}`,
-			});
-
-			const threadChannel = await interaction.channel.threads.create({
-				name: `${threadTitle}`,
-				reason: `A separate thread for this incident.`,
-			});
-			threadChannel.permissionsFor();
-			threadEmbed = new EmbedBuilder()
-				.setColor("Blue")
-				.setDescription(
-					`**Report van: ${interaction.member}\nTegen: ${driver} en ${secondDriver}**\n\nSessie: ${session}\nUitleg: ${reason}\nClip: ${clip}\n`
-				)
-				.setFooter({
-					text: `Gebruik '/protest' om in bezwaar te gaan`,
-				});
-
-			const reportMessage = await threadChannel.send({
-				embeds: [threadEmbed],
-				content: `${interaction.member}${driver}${secondDriver} -- <@&${fiaRole}><@&${raceDirector}>`,
-			});
-		}
+		const reportMessage = await threadChannel.send({
+			embeds: [threadEmbed],
+			content: `${interaction.member}${driver} -- <@&${fiaRole}><@&${raceDirector}>`,
+		});
 	},
 };
