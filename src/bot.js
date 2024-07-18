@@ -18,6 +18,7 @@ const client = new Client({
 	],
 });
 
+
 client.commands = new Collection();
 client.commandArray = [];
 client.colour = "";
