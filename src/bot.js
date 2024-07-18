@@ -5,6 +5,10 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const { Player, GuildQueue, GuildNodeManager } = require("discord-player");
 
+// MongoDB Setup
+const mongoose = require("mongoose");
+const { MONGO_URI } = process.env;
+
 const path = require("node:path");
 
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
@@ -38,14 +42,8 @@ client.player = new Player(client, {
 		highWaterMark: 1 << 25,
 	},
 });
-
 client.queueManager = new GuildNodeManager(client.player);
-
 client.player.extractors.loadDefault();
-
-// MongoDB Setup
-const mongoose = require("mongoose");
-const { MONGO_URI } = process.env;
 
 (async () => {
 	try{
