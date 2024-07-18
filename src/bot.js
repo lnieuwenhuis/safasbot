@@ -50,12 +50,13 @@ client.player.extractors.loadDefault();
 		mongoose.set('strictQuery', false);
 		await mongoose.connect(MONGO_URI);
 		console.log("Connected to MongoDB");
+		
 		// Load events and commands
 		client.handleEvents();
 		client.handleCommands();
+		client.login(token);
 	} catch (err) {
 		console.log(err);
 	} 
 })();
 
-client.login(token);
