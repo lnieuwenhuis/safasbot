@@ -18,29 +18,6 @@ const client = new Client({
 	],
 });
 
-
-// MongoDB Setup
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const { MONGO_URI } = process.env;
-
-const mongoClient = new MongoClient(MONGO_URI, {
-	serverApi: {
-		version: ServerApiVersion.v1,
-		strict: true,
-		deprecationErrors: true,
-	}
-});
-
-async function run() {
-	try {
-		await mongoClient.connect();
-		await mongoClient.db("admin").command({ ping: 1 });
-		console.log("Connected successfully to server");
-	} finally {
-		await mongoClient.close();
-	}
-}
-
 client.commands = new Collection();
 client.commandArray = [];
 client.colour = "";
@@ -66,7 +43,21 @@ client.queueManager = new GuildNodeManager(client.player);
 
 client.player.extractors.loadDefault();
 
-run().catch(console.dir);
-client.handleEvents();
-client.handleCommands();
+// MongoDB Setup
+const mongoose = require("mongoose");
+const { MONGO_URI } = process.env;
+
+(async () => {
+	try{
+		mongoose.set('strictQuery', false);
+		await mongoose.connect(MONGO_URI);
+		console.log("Connected to MongoDB");
+		// Load events and commands
+		client.handleEvents();
+		client.handleCommands();
+	} catch (err) {
+		console.log(err);
+	} 
+})();
+
 client.login(token);
