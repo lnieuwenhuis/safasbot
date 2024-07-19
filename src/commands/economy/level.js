@@ -1,6 +1,5 @@
-const { SlashCommandBuilder, AttachmentBuilder, Interaction, Client } = require("discord.js");
+const { SlashCommandBuilder, Interaction, Client, EmbedBuilder } = require("discord.js");
 const Level = require("../../models/Level");
-const { RankCardBuilder } = require("canvacord");
 
 /**
  * @param {Interaction} interaction
@@ -45,20 +44,48 @@ module.exports = {
         });
         let currentRank = allLevels.findIndex((level) => level.userId === targetUserId) + 1;
 
-        const rank = new RankCardBuilder({
-            username: targetUserObj.displayName,
-            discriminator: targetUserObj.user.discriminator,
-            currentXP: fetchedLevel.xp,
-            neededXP: fetchedLevel.level * 100,
-            currentLevel: fetchedLevel.level,
-            rank: currentRank,
-            level: fetchedLevel,
-            status: targetUserObj.presence.status,
-            progressBar: "#FFFFFF",
-        }).setAvatar(targetUserObj.user.displayAvatarURL({ format: "png" }));
-        const data = await rank.build({ format: "png" });
-        const attachment = new AttachmentBuilder(data)
+        let rankString = "";
         
-        return interaction.reply({ files: [attachment] });
+        if (currentRank === 1) {
+            rankString = "🥇";
+        }
+        if (currentRank === 2) {
+            rankString = "🥈";
+        }
+        if (currentRank === 3) {
+            rankString = "🥉"
+        }
+        if(currentRank >3 && currentRank <=5) {
+            rankString = ":star2:";
+        }
+        if(currentRank >5 && currentRank <=10) {
+            rankString = ":star:";
+        }
+        if(currentRank >10 && currentRank <=20) {
+            rankString = ":sparkles:";
+        }
+        if (currentRank > 20) {
+            rankString = ":small_orange_diamond:";
+        }
+
+        const embed = new EmbedBuilder()
+        .setTitle(`${targetUserObj.displayName}'s Level and Rank`)
+        .setColor("Blurple")
+        .setThumbnail(targetUserObj.user.displayAvatarURL())
+        .addFields({
+            name: "Level",
+            value: `${fetchedLevel.level}`,
+            inline: true,
+        }, {
+            name: "XP",
+            value: `${fetchedLevel.xp}/${fetchedLevel.level * 100}`,
+            inline: true,
+        }, {
+            name: "Rank",
+            value: `${rankString}${currentRank}/${allLevels.length}`,
+            inline: true,
+        })
+        
+        return interaction.reply({ embeds: [embed] });
 	},
 };

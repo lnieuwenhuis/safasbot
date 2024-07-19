@@ -13,5 +13,6 @@ module.exports = {
 		});
 
 		console.log(`Ready, ${client.user.tag} is logged in and online!`);
+		console.log(`Bot is in ${client.guilds.cache.size} servers`);
 	},
 };
