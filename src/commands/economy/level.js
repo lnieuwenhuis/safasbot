@@ -19,8 +19,8 @@ module.exports = {
 	async execute(interaction, client) {
         if (!interaction.guild) return interaction.reply("This command only works in a server!");
 
-		const user = interaction.options.getMentionable(`user`)?.value;
-        const targetUserId = user || interaction.member.id;
+		const user = interaction.options.getMentionable(`user`);
+        const targetUserId = user.id || interaction.member.id;
         const targetUserObj = await interaction.guild.members.fetch(targetUserId);
 
         const fetchedLevel = await Level.findOne({
@@ -28,7 +28,7 @@ module.exports = {
             guildId: interaction.guild.id,
         });
         if(!fetchedLevel) {
-            interaction.editReply(
+            interaction.reply(
                 user ? `${targetUserObj.displayName} has no level yet!` : `You have no level yet!`
             );
             return;
@@ -85,7 +85,10 @@ module.exports = {
             value: `${rankString}${currentRank}/${allLevels.length}`,
             inline: true,
         })
-        
-        return interaction.reply({ embeds: [embed] });
+        try {
+            interaction.reply({ embeds: [embed] });
+        } catch (error) {
+            console.log(error);
+        }
 	},
 };

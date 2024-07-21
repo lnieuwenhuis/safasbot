@@ -1,6 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require("discord.js");
-
-//TODO: Add buttons to see specific day hourly forecast
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -45,7 +43,7 @@ module.exports = {
             embed.setThumbnail(`https:${data.current.condition.icon}`);
             for (let i = 0; i < days; i++) {
                 var today = new Date();
-                var dd = String(today.getDate() + i).padStart(2, '0');
+                var dd = String(today.getDate() + (i + 1)).padStart(2, '0');
                 var mm = String(today.getMonth() + 1).padStart(2, '0');
                 var yyyy = today.getFullYear();
                 today = dd + '/' + mm + '/' + yyyy;
