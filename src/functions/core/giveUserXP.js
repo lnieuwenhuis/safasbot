@@ -1,6 +1,12 @@
 const Level = require("../../models/Level");
 const calculateLevelXp = require("../utils/calculateLevelXp");
 
+function getRandomXp(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 async function giveUserXP(message) {
     if (message.author.bot || !message.inGuild()) return;
 
