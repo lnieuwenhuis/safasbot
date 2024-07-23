@@ -19,9 +19,13 @@ module.exports = {
 	async execute(interaction, client) {
         if (!interaction.guild) return interaction.reply("This command only works in a server!");
 
-		const user = interaction.options.getMentionable(`user`);
-        const targetUserId = user.id || interaction.member.id;
+		const user = interaction.options.getMentionable(`user`) || interaction.user;
+        const targetUserId = user.id;
         const targetUserObj = await interaction.guild.members.fetch(targetUserId);
+        if (!targetUserObj) {
+            interaction.reply("User not found!");
+            return;
+        }
 
         const fetchedLevel = await Level.findOne({
             userId: targetUserId,
