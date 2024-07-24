@@ -27,6 +27,11 @@ module.exports = {
             return;
         }
 
+        if (!targetUserObj) {
+            interaction.reply("User not found!");
+            return;
+        }
+
         const fetchedLevel = await Level.findOne({
             userId: targetUserId,
             guildId: interaction.guild.id,
