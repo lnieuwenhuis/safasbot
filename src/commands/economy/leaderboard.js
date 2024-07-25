@@ -35,26 +35,57 @@ module.exports = {
         let currentRank = allLevels.findIndex((level) => level.userId === interaction.user.id) + 1;
 
         let rankString = "";
-        
-        if (currentRank === 1) {
-            rankString = "🥇";
-        } else if (currentRank === 2) {
-            rankString = "🥈";
-        } else if (currentRank === 3) {
-            rankString = "🥉";
+
+        let debug = 0;
+
+        async function setRankString(user) {
+            let rank;
+            try {
+                rank = allLevels.findIndex((level) => level.userId === user.id) + 1;
+            } catch (error) {
+            }
+
+            if (rank === 1) {
+                rankString = "🥇";
+            }
+            if (rank === 2) {
+                rankString = "🥈";
+            }
+            if (rank === 3) {
+                rankString = "🥉"
+            }
+            if(rank >3 && rank <=5) {
+                rankString = ":star2:";
+            }
+            if(rank >5 && rank <=10) {
+                rankString = ":star:";
+            }
+            if(rank >10 && rank <=20) {
+                rankString = ":sparkles:";
+            }
+            if (rank > 20) {
+                rankString = ":small_orange_diamond:";
+            }
+            return rankString;
         }
 
-        let leaderboard = allLevels.slice(skip, skip + perPage).map((level, index) => {
+        let leaderboard = await Promise.all(allLevels.slice(skip, skip + perPage).map(async (level, index) => {
             let user = interaction.guild.members.cache.get(level.userId);
-            return `${index + 1 + skip}. ${rankString} ${user ? user.displayName : "Unknown User"} - Level ${level.level} (${level.xp} XP)`;
-        });
+            return `${index + 1 + skip}. ${await setRankString(user)} ${user ? user.displayName : "Unknown User"} - Level ${level.level} (${level.xp} XP)`;
+        }));
+
+        let leaderboardString = leaderboard.join("\n");
+
+        await setRankString(interaction.user);
 
         const embed = new EmbedBuilder()
             .setTitle(`Leaderboard for ${interaction.guild.name}`)
-            .setDescription(leaderboard.join("\n"))
-            .setColor("RANDOM")
-            .setFooter(`Page ${page} | Your rank: ${currentRank}`);
-
-        interaction.reply({ embeds: [embed] });
+            .addFields(
+                { name: "Rank", value: `${leaderboardString}`, inline: false },
+                { name: "\nYour Rank", value: `#${currentRank} - ${rankString}`, inline: true },
+                { name: "Page", value: `#${page}`, inline: true }
+            )
+            .setColor("Blurple")
+        await interaction.reply({ embeds: [embed] });
     }
 };
