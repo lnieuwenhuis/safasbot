@@ -1,5 +1,5 @@
 const Level = require("../../models/Level");
-const calculateLevelXp = require("../../functions/utils/calculateLevelXp");
+const calculateLevelXp = require("../utils/calculateLevelXp");
 
 function getRandomXp(min, max) {
     min = Math.ceil(min);

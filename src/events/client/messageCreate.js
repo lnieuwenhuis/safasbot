@@ -1,5 +1,5 @@
 const { Client, Message } = require("discord.js");
-const giveUserXP = require("../core/giveUserXP");
+const giveUserXP = require("../../functions/core/giveUserXP");
 
 /**
  *  
