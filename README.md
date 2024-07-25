@@ -1,6 +1,5 @@
 # Safasbot
-
-Discord bot in active development, can do some admin stuff, forecast the weather, has a leveling system and more!
+Discord bot in active development, can do some admin stuff, forecast the weather using the [Weather API](https://www.weatherapi.com/), has a leveling system and more!
 
 # Leveling
 For leveling to work you have to set up a [MongoDB Cloud Server](https://cloud.mongodb.com)
