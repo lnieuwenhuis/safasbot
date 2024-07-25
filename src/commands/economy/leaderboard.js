@@ -33,11 +33,7 @@ module.exports = {
         });
 
         let currentRank = allLevels.findIndex((level) => level.userId === interaction.user.id) + 1;
-
         let rankString = "";
-
-        let debug = 0;
-
         async function setRankString(user) {
             let rank;
             try {
