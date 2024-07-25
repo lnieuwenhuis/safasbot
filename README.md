@@ -13,9 +13,12 @@ To use this bot in your own server, use the following steps:
 3. Now change the name of `.env.example` to `.env` and change the required fields to your own tokens.
 
 **Docker**
-5. To make and run the Docker container, just run `docker build . -t *your_tag*`, and when it's finished, run `docker run *your_tag*`
+
+4. To make and run the Docker container, just run `docker build . -t *your_tag*`, and when it's finished, run `docker run *your_tag*`
+   
 **Hardware**
-6. If you want to run the bot on bare metal hardware, the only thing left to do is run `npm run test` in your terminal of choice.
+
+4. If you want to run the bot on bare metal hardware, the only thing left to do is run `npm run test` in your terminal of choice.
 
 # Ready-2-use
 Add **my version** of this bot to your server by clicking [here](https://discord.com/api/oauth2/authorize?client_id=1012693236541829147&permissions=8&scope=bot%20applications.commands)
