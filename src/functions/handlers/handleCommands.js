@@ -1,4 +1,4 @@
-const { REST } = require("@discordjs/rest");
+import { REST } from "@discordjs/rest";
 const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 
@@ -8,7 +8,7 @@ module.exports = (client) => {
 		for (const folder of commandFolders) {
 			const commandFiles = fs
 				.readdirSync(`./src/commands/${folder}`)
-				.filter((file) => file.endsWith(".js"));
+				.filter((file) => file.endsWith(".ts"));
 
 			const { commands, commandArray } = client;
 
