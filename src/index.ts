@@ -22,7 +22,7 @@ for (const folder of functionFolders) {
         .readdirSync(`./src/functions/${folder}`)
         .filter((file: any) => file.endsWith(".ts"));
     for (const file of functionFiles) {
-        require(`./functions/${folder}/${file}`)(client);
+        import(`./functions/${folder}/${file}`);
     }
 }
 

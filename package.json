@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.js",
+    "start": "node dist/index.cjs",
     "build": "tsup src/index.ts --minify"
   },
   "dependencies": {
@@ -11,8 +11,10 @@
     "mongoose": "^8.5.2"
   },
   "devDependencies": {
+    "ts-node": "^10.9.2",
     "tsup": "^8.2.4",
     "tsx": "^4.16.5",
     "typescript": "^5.5.4"
-  }
+  },
+  "type": "module"
 }
