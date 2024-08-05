@@ -4,6 +4,9 @@
   "description": "",
   "main": "src/bot.js",
   "scripts": {
+    "dev": "tsx watch src/bot.ts",
+    "start": "node dist/index.js",
+    "build":"tsup src/index.ts --minify",
     "test": "node ."
   },
   "keywords": [],
@@ -30,5 +33,10 @@
     "opus": "^0.0.0",
     "rebuild": "^0.1.2",
     "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.4",
+    "tsx": "^4.16.5",
+    "typescript": "^5.5.4"
   }
 }
