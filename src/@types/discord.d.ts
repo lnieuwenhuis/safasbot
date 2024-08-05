@@ -7,4 +7,10 @@ declare module "discord.js" {
         handleEvents: () => void;
         handleCommands: () => void;
     }
+    export interface client {
+        commands: Collection<any, any>;
+        commandArray: any[];
+        handleEvents: () => void;
+        handleCommands: () => void;
+    }
 }
